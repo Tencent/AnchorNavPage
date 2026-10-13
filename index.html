@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AnchorNav – Long-Horizon 3D Game Navigation with Persistent Memory and Waypoint-Conditioned Control</title>
+  <meta name="description" content="AnchorNav is a vision-language navigation framework for long-horizon play in photorealistic 3D games, combining a persistent topological memory with a waypoint-conditioned controller." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#hero" class="navbar-brand">AnchorNav</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="#video">Video</a></li>
+        <li><a href="#abstract">Abstract</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#citation">Citation</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="container">
+      <!-- <div class="hero-badge">Vision-Language Navigation</div> -->
+      <h1>AnchorNav: Long-Horizon 3D Game Navigation with Persistent Memory and Waypoint-Conditioned Control</h1>
+
+      <div class="authors">
+        <span class="author">Xianghui Ze<sup>1</sup></span>
+        <span class="author">Jiayu Ying<sup>2</sup></span>
+        <span class="author">Xin Jiang<sup>1</sup></span>
+        <span class="author">Xusen Guo<sup>3</sup></span>
+        <span class="author">Miaokun Chen<sup>4</sup></span>
+        <span class="author">Zixing Guo<sup>1</sup></span>
+        <span class="author">Shaoguo Wen<sup>1</sup></span>
+        <span class="author">Yijiao Zhu<sup>1</sup></span>
+        <span class="author">Zhibin Wang<sup>1</sup></span>
+        <span class="author">Xinyan Chen<sup>1</sup></span>
+        <span class="author">Tianle Feng<sup>1</sup></span>
+        <span class="author">Xin Zheng<sup>1</sup></span>
+        <span class="author">Jianyu Wu<sup>1</sup></span>
+        <span class="author">Wen Gao<sup>1</sup><sup class="project-lead">*</sup></span>
+        <span class="author">Junle Wang<sup>1</sup><sup class="project-lead">*</sup></span>
+        <span class="author">Xin Tan<sup>2</sup><sup class="corresponding">&dagger;</sup></span>
+      </div>
+
+      <div class="affiliations">
+        <sup>1</sup>Tencent Turing Lab &nbsp;&nbsp;
+        <sup>2</sup>East China Normal University &nbsp;&nbsp;
+        <sup>3</sup>Hong Kong University of Science and Technology &nbsp;&nbsp;
+        <sup>4</sup>Wuhan University
+      </div>
+
+      <p class="internship-note">* Project leaders. &nbsp; &dagger; Corresponding author.</p>
+
+      <div class="hero-buttons">
+        <a href="#video" class="btn btn-primary">
+          <i class="fa-solid fa-play"></i> Full-route video
+        </a>
+        <a href="#results" class="btn btn-outline">
+          <i class="fa-solid fa-chart-column"></i> Results
+        </a>
+        <a href="#citation" class="btn btn-outline">
+          <i class="fa-solid fa-quote-left"></i> Citation
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section video-lead" id="video">
+    <div class="container-wide">
+      <h2 class="section-title">Full-route traversal</h2>
+      <div class="section-divider"></div>
+      <p class="lead">
+        Starting from the Chapter&nbsp;1 spawn point in <em>Black Myth: Wukong</em>, the agent has to reach the boss arena with no human intervention. Every step is a native keyboard or mouse action issued from rendered frames. A skilled player finishes this route in about 20 minutes. The recording below is a full-map run, trimmed to 43 minutes.
+      </p>
+      <div class="video-stage fade-in">
+        <video controls playsinline preload="metadata" src="en/video_43min_english_compressed.mp4">
+          Your browser does not support embedded video.
+        </video>
+      </div>
+      <div class="video-meta">
+        <span class="pill"><i class="fa-solid fa-route"></i> Full map</span>
+        <span class="pill"><i class="fa-regular fa-clock"></i> 43 min, trimmed</span>
+        <span class="pill"><i class="fa-solid fa-keyboard"></i> Native keyboard &amp; mouse</span>
+        <span class="pill"><i class="fa-solid fa-eye"></i> RGB only, no privileged pose</span>
+        <span class="pill"><i class="fa-solid fa-gauge-high"></i> 1.5× by default</span>
+      </div>
+      <p class="rate-note">Playback speed defaults to 1.5×. The control bar can still change it.</p>
+
+      <div class="rollout-block" id="rollouts">
+        <h2 class="section-title">Playable rollouts</h2>
+        <div class="section-divider"></div>
+        <p class="lead">Clips are shown one at a time. Easy and medium clips are Chapter&nbsp;1 instructions. Hard clips are out-of-domain chapters.</p>
+        <div class="demo-tabs" role="tablist">
+          <button class="demo-tab active" type="button" role="tab" aria-selected="true" data-panel="easy">Easy · 5</button>
+          <button class="demo-tab" type="button" role="tab" aria-selected="false" data-panel="mid">Medium · 5</button>
+          <button class="demo-tab" type="button" role="tab" aria-selected="false" data-panel="hard">Hard (OOD) · 5</button>
+        </div>
+        <div class="video-stage">
+          <video id="rolloutVideo" controls playsinline preload="metadata" src="en/easy/Tc1-repeat-1/video.mp4">
+            Your browser does not support embedded video.
+          </video>
+        </div>
+        <div class="rollout-controls">
+          <button class="rollout-btn" id="rolloutPrev" type="button">
+            <i class="fa-solid fa-chevron-left"></i> Previous
+          </button>
+          <p class="rollout-caption"><span id="rolloutLabel">Case 1</span><span id="rolloutCount">1 / 5</span></p>
+          <button class="rollout-btn" id="rolloutNext" type="button">
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="video-meta">
+          <span class="pill"><i class="fa-solid fa-gauge-high"></i> 1.5× by default</span>
+        </div>
+        <p class="rate-note">Playback speed defaults to 1.5×. The control bar can still change it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="abstract">
+    <div class="container-wide">
+      <h2 class="section-title">Abstract</h2>
+      <div class="section-divider"></div>
+      <p class="abstract-text">
+        Recent advances in multimodal agents have steadily improved autonomous game-playing, yet reliable long-range navigation in photorealistic 3D games remains challenging because of open terrain, extended horizons, and the absence of privileged localization.
+        <strong>AnchorNav</strong> is a vision-language navigation framework built around two complementary anchors.
+        The <em>local visual anchor</em> projects the next navigation target into the current view as a 2D waypoint, which guides a waypoint-conditioned visuomotor controller together with a language sub-instruction.
+        The <em>global anchor</em> is a persistent topological memory: visual place recognition periodically re-anchors visual odometry to places the agent has already established.
+        In photorealistic 3D games, AnchorNav completes long-horizon navigation, and it remains competitive on RxR under the VLN-CE protocol.
+      </p>
+      <div class="figure-block fade-in">
+        <img src="static/figures/figure1.png" alt="Dual-scale anchoring: long-horizon failure, the global and local anchors, and the resulting navigation." />
+        <div class="figure-desc">
+          <h3>Dual-scale anchoring for long-horizon game navigation</h3>
+          <p><strong>(a)</strong> Failure comes from two places: the agent loses track of where it has been, and the next route target is ambiguous in the current view. The map is drawn only for illustration and is not given to the agent. <strong>(b)</strong> AnchorNav keeps a persistent global topological anchor and projects the next target into the image as a local waypoint. <strong>(c)</strong> Slow route reasoning and fast keyboard–mouse control then run on separate timescales.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="method">
+    <div class="container-wide">
+      <h2 class="section-title">Method</h2>
+      <div class="section-divider"></div>
+      <div class="figure-block fade-in">
+        <img src="static/figures/framework.png" alt="Overview of AnchorNav: offline topological memory, online re-anchoring, and a waypoint-conditioned local policy." />
+      </div>
+      <p class="method-note">The global anchor keeps a topological memory, localizes the agent, and selects the next route node. The local anchor projects that node into the current view as a waypoint and, with a language sub-instruction, turns it into keyboard and mouse actions.</p>
+    </div>
+  </section>
+
+  <section class="section" id="results">
+    <div class="container-wide">
+      <h2 class="section-title">Results</h2>
+      <div class="section-divider"></div>
+      <p class="lead">
+        We evaluate four tracks: a long-horizon boss route, short-horizon instruction following at three difficulties, a reference comparison on RxR, and ablations of the memory and of the two interface channels. Training video is 350 hours of Chapter&nbsp;1 gameplay with synchronized keyboard and mouse actions.
+      </p>
+
+      <div class="subsection" id="long-horizon">
+        <h3 class="block-title">Long-horizon traversal</h3>
+        <div class="result-split long-split fade-in">
+          <div class="long-horizon-main">
+            <p class="callout">
+              Each run is capped at two hours, and every method is tried eight times. General-purpose VLMs receive a navigation map in the prompt. AnchorNav instead follows the topological memory built from walkthrough video. 
+            </p>
+            <div class="table-card">
+            <div class="table-card-header">
+              <h3>Chapter 1, from spawn to the boss</h3>
+              <p>PCR is route coverage. PCR@15 is coverage within 15 minutes. PCR-F is final coverage averaged over runs. RVR is the share of progress that is later retraced. TTS is averaged over successful runs only.</p>
+            </div>
+            <div class="table-scroll">
+              <div class="table-full">
+                <table>
+                  <thead>
+                    <tr class="group-header">
+                      <th>Method</th>
+                      <th>PCR@15 &uarr;</th>
+                      <th>PCR-F &uarr;</th>
+                      <th>RVR &darr;</th>
+                      <th>Succ. &uarr;</th>
+                      <th>TTS (min) &darr;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="method-name">GPT-5.5</td>
+                      <td>9.3</td>
+                      <td class="second">47.6</td>
+                      <td>45.5</td>
+                      <td class="muted">&mdash;</td>
+                      <td class="muted">&mdash;</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">Claude-ops5</td>
+                      <td>4.3</td>
+                      <td>44.0</td>
+                      <td>42.9</td>
+                      <td class="muted">&mdash;</td>
+                      <td class="muted">&mdash;</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">Gemini3.8flash</td>
+                      <td class="second">14.2</td>
+                      <td>31.2</td>
+                      <td class="second">38.5</td>
+                      <td class="muted">&mdash;</td>
+                      <td class="muted">&mdash;</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">kimi-k3</td>
+                      <td>4.4</td>
+                      <td>39.3</td>
+                      <td>40.0</td>
+                      <td class="muted">&mdash;</td>
+                      <td class="muted">&mdash;</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td class="method-name">AnchorNav</td>
+                      <td class="best">30.3</td>
+                      <td class="best">96.9</td>
+                      <td class="best">37.0</td>
+                      <td class="best">62.5</td>
+                      <td class="best">62.29</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <figure class="map-figure">
+            <img src="static/figures/exp_long_horizon.png" alt="Illustrative trajectories of AnchorNav and four general-purpose VLMs on the Chapter 1 route." />
+            <figcaption>Illustrative trajectories. The yellow route is AnchorNav. Baselines leave the route or turn back before the boss arena.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="subsection" id="instruction">
+        <h3 class="block-title">Short-horizon instruction following</h3>
+        <div class="figure-block fade-in">
+          <img src="static/figures/exp1.png" alt="Qualitative rollouts for an easy, a medium, and a hard instruction." />
+          <div class="figure-desc">
+            <p>One easy, one medium, and one hard instruction. The hard example is out of the Chapter&nbsp;1 collection.</p>
+          </div>
+        </div>
+
+        <div class="table-card fade-in">
+          <div class="table-card-header">
+            <h3>Success by difficulty</h3>
+            <p>SR and OSR are percentages. OSR counts arrivals in the goal vicinity, including runs that do not stop correctly. Higher is better for every column.</p>
+          </div>
+          <div class="table-scroll">
+            <div class="table-full">
+              <table>
+                <thead>
+                  <tr class="group-header">
+                    <th rowspan="2">Method</th>
+                    <th colspan="4">Easy</th>
+                    <th colspan="4">Medium</th>
+                    <th colspan="4">Hard</th>
+                  </tr>
+                  <tr class="sub-header">
+                    <th>SR</th><th>OSR</th><th>SPL</th><th>nDTW</th>
+                    <th>SR</th><th>OSR</th><th>SPL</th><th>nDTW</th>
+                    <th>SR</th><th>OSR</th><th>SPL</th><th>nDTW</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="band"><td colspan="13">General-purpose VLMs</td></tr>
+                  <tr>
+                    <td class="method-name">Kimi3</td>
+                    <td>42.2</td><td>61.4</td><td>0.391</td><td>0.440</td>
+                    <td>24.4</td><td>33.6</td><td>0.236</td><td>0.402</td>
+                    <td>24.0</td><td>33.2</td><td>0.230</td><td>0.387</td>
+                  </tr>
+                  <tr>
+                    <td class="method-name">Gemini-3.1-Pro</td>
+                    <td class="second">50.6</td><td class="best">83.6</td><td>0.467</td><td>0.458</td>
+                    <td class="second">35.6</td><td class="second">49.2</td><td class="second">0.346</td><td class="second">0.465</td>
+                    <td>29.6</td><td>48.4</td><td class="second">0.283</td><td class="second">0.452</td>
+                  </tr>
+                  <tr>
+                    <td class="method-name">GPT-5.5</td>
+                    <td>39.8</td><td>76.8</td><td>0.365</td><td>0.386</td>
+                    <td>23.6</td><td>40.4</td><td>0.195</td><td>0.324</td>
+                    <td class="second">30.0</td><td class="best">57.6</td><td>0.264</td><td>0.393</td>
+                  </tr>
+                  <tr class="band"><td colspan="13">Trained on the same demonstrations</td></tr>
+                  <tr>
+                    <td class="method-name">DualVLN</td>
+                    <td>15.4</td><td>36.2</td><td>0.152</td><td>0.192</td>
+                    <td>12.0</td><td>19.6</td><td>0.120</td><td>0.050</td>
+                    <td>10.8</td><td>38.4</td><td>0.098</td><td>0.305</td>
+                  </tr>
+                  <tr>
+                    <td class="method-name">ActiveVLN</td>
+                    <td>48.2</td><td>62.4</td><td class="second">0.482</td><td class="second">0.487</td>
+                    <td>22.8</td><td>36.0</td><td>0.214</td><td>0.442</td>
+                    <td>15.2</td><td>28.4</td><td>0.144</td><td>0.401</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <td class="method-name">AnchorNav</td>
+                    <td class="best">53.8</td><td class="second">77.2</td><td class="best">0.502</td><td class="best">0.508</td>
+                    <td class="best">47.6</td><td class="best">50.0</td><td class="best">0.439</td><td class="best">0.547</td>
+                    <td class="best">38.0</td><td class="second">49.2</td><td class="best">0.351</td><td class="best">0.533</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="callout">
+          This track freezes the route target, so the remaining errors are grounding and execution. Easy tasks are atomic. Medium tasks require recognizing a landmark and acting at the right moment. Hard tasks come from chapters outside the Chapter&nbsp;1 collection. Each level has 50 tasks and five trials. AnchorNav is best on success, SPL, and nDTW at every level.
+        </p>
+      </div>
+
+      <div class="subsection" id="rxr">
+        <h3 class="block-title">Reference comparison on RxR</h3>
+        <div class="figure-block fade-in">
+          <img src="static/figures/RxR.png" alt="A qualitative RxR episode from a gym, through a washroom, to a refrigerator." />
+          <div class="figure-desc">
+            <p>One RxR episode. The instruction walks from the gym equipment through the washroom and ends at the refrigerator.</p>
+          </div>
+        </div>
+        <div class="table-card fade-in">
+            <div class="table-card-header">
+              <h3>RxR, VLN-CE, English val-unseen</h3>
+              <p>An episode succeeds when the agent stops within 3&nbsp;m of the goal. NE is in meters. Baseline numbers are quoted from prior work and were not rerun with this adapter.</p>
+            </div>
+            <div class="table-scroll">
+              <div class="table-full">
+                <table>
+                  <thead>
+                    <tr class="group-header">
+                      <th>Method</th>
+                      <th>NE &darr;</th>
+                      <th>SR &uarr;</th>
+                      <th>SPL &uarr;</th>
+                      <th>nDTW &uarr;</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="method-name">Seq2Seq</td>
+                      <td>12.1</td><td>13.9</td><td>11.9</td><td>30.8</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">NaVILA</td>
+                      <td>6.77</td><td>49.3</td><td class="second">44.0</td><td class="second">58.8</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">UniNaVid</td>
+                      <td>6.24</td><td>48.7</td><td>40.9</td><td class="muted">&mdash;</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">StreamVLN</td>
+                      <td>6.22</td><td class="second">52.9</td><td class="best">46.0</td><td class="best">61.9</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">ActiveVLN</td>
+                      <td class="second">5.84</td><td>50.7</td><td>41.2</td><td>58.1</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td class="method-name">AnchorNav</td>
+                      <td class="best">5.51</td><td class="best">61.65</td><td>42.12</td><td>52.56</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p class="table-legend"><span class="best">Bold</span> = best &nbsp;|&nbsp; <span class="second">Underline</span> = second best</p>
+          </div>
+        <p class="callout">
+          On RxR English val-unseen, the agent sees only first-person RGB and is adapted to the VLN-CE action set. The topological memory is built from the training split only, so this track does not measure memory in unseen scenes. AnchorNav is best on navigation error and success. StreamVLN remains best on SPL and nDTW. The comparison is a reference for arrival, not a claim of better paths.
+        </p>
+      </div>
+
+      <div class="subsection" id="ablation">
+        <h3 class="block-title">Ablation</h3>
+        <div class="figure-block fade-in">
+          <img src="static/figures/exp2.png" alt="Instruction-only fails by ambiguity, waypoint-only misses the stop, and the full interface succeeds." />
+          <div class="figure-desc">
+            <p>Same instruction, three interfaces. Instruction-only confuses similar pillars. Waypoint-only keeps moving. Both together stop at the stone pillar.</p>
+          </div>
+        </div>
+        <div class="table-card fade-in">
+            <div class="table-card-header">
+              <h3>Memory and interface channels</h3>
+              <p>PCR@15 uses a 15-minute budget. Instruction-following metrics are macro-averaged over 14 instructions and 10 runs. Higher is better throughout.</p>
+            </div>
+            <div class="table-scroll">
+              <div class="table-full">
+                <table>
+                  <thead>
+                    <tr class="group-header">
+                      <th>Configuration</th>
+                      <th>PCR@15</th>
+                      <th>SR</th>
+                      <th>OSR</th>
+                      <th>SPL</th>
+                      <th>nDTW</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="method-name">(A) Without memory</td>
+                      <td>7.50</td><td>46.9</td><td>53.8</td><td>0.444</td><td>0.551</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">(B) Instruction only</td>
+                      <td>16.9</td><td class="second">53.6</td><td>69.2</td><td class="second">0.513</td><td class="second">0.624</td>
+                    </tr>
+                    <tr>
+                      <td class="method-name">(C) Waypoint only</td>
+                      <td class="second">21.4</td><td>36.9</td><td class="second">71.5</td><td>0.253</td><td>0.582</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td class="method-name">(D) Waypoint + instruction</td>
+                      <td class="best">32.7</td><td class="best">65.7</td><td class="best">85.4</td><td class="best">0.610</td><td class="best">0.629</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p class="table-legend"><span class="best">Bold</span> = best &nbsp;|&nbsp; <span class="second">Underline</span> = second best &nbsp;|&nbsp; (D) is the full interface used by AnchorNav.</p>
+          </div>
+        <p class="callout">
+          The local policy checkpoint is fixed. Removing the memory collapses coverage: without a record of visited places, the agent loses its heading. A waypoint alone gives a direction but no stopping condition, so oracle success stays high while true success drops. The language sub-instruction supplies that condition. Both channels together are best on every metric.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="citation">
+    <div class="container-wide">
+      <h2 class="section-title">Citation</h2>
+      <div class="section-divider"></div>
+
+      <div class="citation-block">
+        <button class="copy-btn" id="copyBtn" onclick="copyBibtex()">
+          <i class="fa-regular fa-copy"></i> Copy
+        </button>
+        <pre id="bibtex">@misc{ze2026anchornav,
+  title={AnchorNav: Long-Horizon 3D Game Navigation with Persistent Memory and Waypoint-Conditioned Control},
+  author={Xianghui Ze and Jiayu Ying and Xin Jiang and Xusen Guo and Miaokun Chen and Zixing Guo and Shaoguo Wen and Yijiao Zhu and Zhibin Wang and Xinyan Chen and Tianle Feng and Xin Zheng and Jianyu Wu and Wen Gao and Junle Wang and Xin Tan},
+  year={2026},
+  note={Manuscript}
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>AnchorNav &copy; 2026</p>
+    </div>
+  </footer>
+
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    navToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-label', 'Open menu');
+      });
+    });
+
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+    });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function copyBibtex() {
+      const text = document.getElementById('bibtex').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    const rollouts = {
+      easy: [
+        ['en/easy/Tc1-repeat-1/video.mp4', 'Case 1'],
+        ['en/easy/Tc4-repeat-3/video.mp4', 'Case 2'],
+        ['en/easy/Tc10-repeat-4/video.mp4', 'Case 3'],
+        ['en/easy/e2envi-24-repeat-2/video.mp4', 'Case 4'],
+        ['en/easy/e2envi-26-repeat-1/video.mp4', 'Case 5']
+      ],
+      mid: [
+        ['en/mid/bm3-5_repeat1.mp4', 'Case 1'],
+        ['en/mid/bm3-6_repeat3.mp4', 'Case 2'],
+        ['en/mid/bm3-39_repeat3.mp4', 'Case 3'],
+        ['en/mid/bm3-40_repeat3.mp4', 'Case 4'],
+        ['en/mid/bm3-53_repeat3.mp4', 'Case 5']
+      ],
+      hard: [
+        ['en/hard(ood)/bm4-2-2_repeat1.mp4', 'Case 1'],
+        ['en/hard(ood)/bm4-2-11_repeat2.mp4', 'Case 2'],
+        ['en/hard(ood)/bm4-2-12_repeat3.mp4', 'Case 3'],
+        ['en/hard(ood)/bm4-2-18_repeat1.mp4', 'Case 4'],
+        ['en/hard(ood)/bm4-2-27_repeat1.mp4', 'Case 5']
+      ]
+    };
+    let rolloutGroup = 'easy';
+    let rolloutIndex = 0;
+    const rolloutVideo = document.getElementById('rolloutVideo');
+
+    function showRollout(continuePlayback) {
+      const list = rollouts[rolloutGroup];
+      const [src, label] = list[rolloutIndex];
+      const wasPlaying = continuePlayback && !rolloutVideo.paused && !rolloutVideo.ended;
+      rolloutVideo.pause();
+      if (rolloutVideo.getAttribute('src') !== src) {
+        rolloutVideo.src = src;
+      }
+      document.getElementById('rolloutLabel').textContent = label;
+      document.getElementById('rolloutCount').textContent = (rolloutIndex + 1) + ' / ' + list.length;
+      document.getElementById('rolloutPrev').disabled = rolloutIndex === 0;
+      document.getElementById('rolloutNext').disabled = rolloutIndex === list.length - 1;
+      if (wasPlaying) {
+        rolloutVideo.play().catch(() => {});
+      }
+    }
+
+    document.querySelectorAll('.demo-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.demo-tab').forEach((el) => {
+          el.classList.remove('active');
+          el.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        rolloutGroup = tab.dataset.panel;
+        rolloutIndex = 0;
+        showRollout(false);
+      });
+    });
+
+    document.getElementById('rolloutPrev').addEventListener('click', () => {
+      if (rolloutIndex === 0) return;
+      rolloutIndex -= 1;
+      showRollout(true);
+    });
+    document.getElementById('rolloutNext').addEventListener('click', () => {
+      if (rolloutIndex >= rollouts[rolloutGroup].length - 1) return;
+      rolloutIndex += 1;
+      showRollout(true);
+    });
+    showRollout(false);
+
+    // Playback speed defaults to 1.5× for every video on the page.
+    const DEFAULT_RATE = 1.5;
+    document.querySelectorAll('video').forEach((video) => {
+      const applyRate = () => {
+        video.defaultPlaybackRate = DEFAULT_RATE;
+        video.playbackRate = DEFAULT_RATE;
+      };
+      applyRate();
+      video.addEventListener('loadedmetadata', applyRate);
+      video.addEventListener('play', () => {
+        applyRate();
+        document.querySelectorAll('video').forEach((other) => {
+          if (other !== video) other.pause();
+        });
+      });
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>

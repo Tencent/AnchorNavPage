@@ -1,0 +1,12 @@
+# Original uncompressed video (861MB, exceeds GitHub's 100MB file limit)
+en/video_trimmed_43min_english_1gb_v2.mp4
+
+# LaTeX / paper sources not needed for the project page
+iclr2027/
+figures/
+
+# Old template
+SceneReVis.github.io-main/
+
+# ffmpeg two-pass logs
+ffmpeg2pass-*
