@@ -1,4 +1,4 @@
-# Original uncompressed video (861MB, exceeds GitHub's 100MB file limit)
+# Original uncompressed video (861MB, exceeds git.woa.com's 100MB object limit; use LFS if needed)
 en/video_trimmed_43min_english_1gb_v2.mp4
 
 # LaTeX / paper sources not needed for the project page
