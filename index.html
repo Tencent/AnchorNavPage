@@ -109,7 +109,7 @@
           <button class="demo-tab" type="button" role="tab" aria-selected="false" data-panel="hard">Hard (OOD) · 5</button>
         </div>
         <div class="video-stage">
-          <video id="rolloutVideo" controls playsinline preload="metadata" src="en/easy/Tc1-repeat-1/video.mp4">
+          <video id="rolloutVideo" controls playsinline preload="metadata" src="en/easy_masked/Tc1-repeat-1/video.mp4">
             Your browser does not support embedded video.
           </video>
         </div>
@@ -521,25 +521,25 @@
 
     const rollouts = {
       easy: [
-        ['en/easy/Tc1-repeat-1/video.mp4', 'Case 1'],
-        ['en/easy/Tc4-repeat-3/video.mp4', 'Case 2'],
-        ['en/easy/Tc10-repeat-4/video.mp4', 'Case 3'],
-        ['en/easy/e2envi-24-repeat-2/video.mp4', 'Case 4'],
-        ['en/easy/e2envi-26-repeat-1/video.mp4', 'Case 5']
+        ['en/easy_masked/Tc1-repeat-1/video.mp4', 'Case 1'],
+        ['en/easy_masked/Tc4-repeat-3/video.mp4', 'Case 2'],
+        ['en/easy_masked/Tc10-repeat-4/video.mp4', 'Case 3'],
+        ['en/easy_masked/e2envi-24-repeat-2/video.mp4', 'Case 4'],
+        ['en/easy_masked/e2envi-26-repeat-1/video.mp4', 'Case 5']
       ],
       mid: [
-        ['en/mid/bm3-5_repeat1.mp4', 'Case 1'],
-        ['en/mid/bm3-6_repeat3.mp4', 'Case 2'],
-        ['en/mid/bm3-39_repeat3.mp4', 'Case 3'],
-        ['en/mid/bm3-40_repeat3.mp4', 'Case 4'],
-        ['en/mid/bm3-53_repeat3.mp4', 'Case 5']
+        ['en/mid_masked/bm3-5_repeat1.mp4', 'Case 1'],
+        ['en/mid_masked/bm3-6_repeat3.mp4', 'Case 2'],
+        ['en/mid_masked/bm3-39_repeat3.mp4', 'Case 3'],
+        ['en/mid_masked/bm3-40_repeat3.mp4', 'Case 4'],
+        ['en/mid_masked/bm3-53_repeat3.mp4', 'Case 5']
       ],
       hard: [
-        ['en/hard(ood)/bm4-2-2_repeat1.mp4', 'Case 1'],
-        ['en/hard(ood)/bm4-2-11_repeat2.mp4', 'Case 2'],
-        ['en/hard(ood)/bm4-2-12_repeat3.mp4', 'Case 3'],
-        ['en/hard(ood)/bm4-2-18_repeat1.mp4', 'Case 4'],
-        ['en/hard(ood)/bm4-2-27_repeat1.mp4', 'Case 5']
+        ['en/hard_masked/bm4-2-2_repeat1.mp4', 'Case 1'],
+        ['en/hard_masked/bm4-2-11_repeat2.mp4', 'Case 2'],
+        ['en/hard_masked/bm4-2-12_repeat3.mp4', 'Case 3'],
+        ['en/hard_masked/bm4-2-18_repeat1.mp4', 'Case 4'],
+        ['en/hard_masked/bm4-2-27_repeat1.mp4', 'Case 5']
       ]
     };
     let rolloutGroup = 'easy';

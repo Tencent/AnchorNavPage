@@ -1,6 +1,9 @@
 # Original uncompressed video (861MB, exceeds git.woa.com's 100MB object limit; use LFS if needed)
 en/video_trimmed_43min_english_1gb_v2.mp4
 
+# Masked full-route video (1.6GB, exceeds the 100MB object limit; hosted as a GitHub Release asset)
+en/video_trimmed_43min_english_1gb_v2_masked.mp4
+
 # LaTeX / paper sources not needed for the project page
 iclr2027/
 /figures/
